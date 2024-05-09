@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid Data Query - Total Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        label, input, button {
+            margin-bottom: 10px;
+            display: block;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Query Total Covid Data</h1>
+    <form id="dataForm">
+        <label for="country">Country:</label>
+        <input type="text" id="country" placeholder="Enter country name">
+        <button type="button" onclick="fetchData()">Submit Query</button>
+    </form>
+    
+    <h2>Country Specific Results:</h2>
+    <pre id="countryResults">No country-specific data to display.</pre>
+    <h2>Global Totals:</h2>
+    <pre id="globalTotals">No global totals to display.</pre>
+
+    <script>
+        function fetchData() {
+            const country = document.getElementById('country').value;
+            if (!country) {
+                document.getElementById('countryResults').textContent = "Please enter a country name to submit the query.";
+                return;
+            }
+
+            const countryDataUrl = `http://127.0.0.1:5000/api/stats?country=${country}&start_date=2020-01-01&end_date=2023-12-31`; // Adjust dates as needed
+            const globalTotalsUrl = 'http://127.0.0.1:5000/api/total_counts';
+
+            Promise.all([
+                fetch(countryDataUrl),
+                fetch(globalTotalsUrl)
+            ]).then(async (responses) => {
+                const [countryDataResponse, globalTotalsResponse] = responses;
+                const countryData = await countryDataResponse.json();
+                const globalTotals = await globalTotalsResponse.json();
+
+                document.getElementById('countryResults').textContent = JSON.stringify(countryData, null, 2);
+                document.getElementById('globalTotals').textContent = JSON.stringify(globalTotals, null, 2);
+            }).catch(error => {
+                document.getElementById('countryResults').textContent = 'Failed to fetch country-specific data: ' + error.message;
+                document.getElementById('globalTotals').textContent = 'Failed to fetch global totals: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
