@@ -274,7 +274,7 @@ To use this page, a user simply needs to:
 
 The script makes calls to the backend, assuming the server is running locally on `http://127.0.0.1:5000`. It fetches country-specific data and global totals using the provided API endpoints.
 
-
+![COVID-19 ](IA626/pro6.png "COVID-19")
 
 # API Testing Documentation
 
